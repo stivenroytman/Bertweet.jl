@@ -47,8 +47,14 @@ end
 function embed(tokenbatch::Vector{Vector{Int}})
 	batchpad!(tokenbatch)
 	tensorbatch = torch.tensor(tokenbatch)
-	cls_vecs = model(tensorbatch)["last_hidden_state"] .|> first
-	return map(vec -> vec.tolist(), cls_vecs)
+	output = model(tensorbatch)
+	pydecref(tensorbatch)
+	cls_vecs = output["last_hidden_state"] .|> first
+	embeddings = map(vec -> vec.tolist(), cls_vecs)
+	output |> values .|> pydecref
+	GC.gc(true)
+	torch.cuda.empty_cache()
+	return embeddings
 end
 
 end
