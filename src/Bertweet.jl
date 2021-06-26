@@ -12,6 +12,7 @@ function __init__()
 	global model = transformers.AutoModel.from_pretrained("vinai/bertweet-base")
 	global tokenizer = transformers.AutoTokenizer.from_pretrained("vinai/bertweet-base", normalized=true)
 	global torch = py"torch"
+	global demojize = py"emoji.demojize"
 end
 
 function setmodel!(modelname::String)
@@ -23,7 +24,11 @@ function settokenizer!(modelname::String)
 end
 
 function encode(tweet::String)
-	tokenizer.encode(tweet)
+	rawtweet = demojize(tweet)
+	while occursin("::", rawtweet)
+		rawtweet = replace(rawtweet, "::" => ":")
+	end
+	tokenizer.encode(rawtweet)
 end
 
 function pad!(tokenvec::Vector{Int}; maxsize::Int)

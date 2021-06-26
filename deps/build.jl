@@ -12,3 +12,5 @@ function build()
 	ENV["PYTHON"] = joinpath(Conda.PYTHONDIR, "python")
 	Pkg.build("PyCall")
 end
+
+build()
