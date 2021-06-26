@@ -1,5 +1,13 @@
 module Bertweet
 
-# Write your package code here.
+using PyCall
+
+function __init__()
+	py"""
+	import emoji
+	import transformers
+	"""
+	global transformers = py"transformers"
+end
 
 end
